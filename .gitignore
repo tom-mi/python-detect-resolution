@@ -1,0 +1,9 @@
+*.iml
+.idea
+
+__pycache__
+*.pyc
+
+.venv/
+
+/src/detect_resolution/nn/data/

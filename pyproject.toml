@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "detect-resolution"
+dynamic = ["version"]
+description = 'Detect original resolution of potentially upscaled video'
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+    { name = "Thomas Reifenberger", email = "tom-mi@users.noreply.github.com" },
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+    'moviepy',
+    'matplotlib',
+    'tqdm',
+]
+[project.scripts]
+detect-resolution = "detect_resolution.cli:main"
+
+[tool.hatch.envs.dev]
+extra-dependencies = [
+]
+path = ".venv"
+
+[project.urls]
+Documentation = "https://github.com/tom-mi/python-detect-resolution#readme"
+Issues = "https://github.com/tom-mi/python-detect-resolution/issues"
+Source = "https://github.com/tom-mi/python-detect-resolution"
+
+[tool.hatch.version]
+path = "src/detect_resolution/__about__.py"
+
