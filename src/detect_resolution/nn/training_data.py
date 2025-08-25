@@ -8,7 +8,7 @@ from typing import Callable, Union, Any
 import torch
 import torchvision.datasets
 import torchvision.transforms as T
-from torchvision.io import decode_image
+from PIL import Image
 
 from detect_resolution.nn.model import INPUT_SIZE
 
@@ -18,6 +18,7 @@ class ScaledImageDatasetMixin(abc.ABC):
         super().__init__(root='data', *args, **kwargs)
         self.num_samples_per_image = num_samples_per_image
         self.crop = T.CenterCrop(INPUT_SIZE)
+        self.downscale_to_ensure_high_detail = T.Resize((INPUT_SIZE, INPUT_SIZE))
         self.to_tensor = T.ToTensor()
 
     def __len__(self):
@@ -36,9 +37,15 @@ class ScaledImageDatasetMixin(abc.ABC):
         return self.to_tensor(upscaled), scale_factor
 
 
+def image_loader(path: Union[str, pathlib.Path]) -> Any:
+    with open(path, "rb") as f:
+        img = Image.open(f)
+        return img.convert("RGBA")  # some images have transparency
+
+
 class CustomImageDataset(torch.utils.data.Dataset):
     def __init__(self, root: str, url: str, img_dir: str, download: bool = False,
-                 loader: Callable[[Union[str, pathlib.Path]], Any] = torchvision.datasets.folder.default_loader,
+                 loader: Callable[[Union[str, pathlib.Path]], Any] = image_loader,
                  transform=None, target_transform=None):
         self.img_dir = img_dir
         self.transform = transform
@@ -89,7 +96,12 @@ class ScaledImageCartoonDataset(ScaledImageDatasetMixin, CustomImageDataset):
             **kwargs)
 
 
+class ScaledImageDatasetCountry211(ScaledImageDatasetMixin, torchvision.datasets.Country211):
+    pass
+
+
 TrainingDataset = torch.utils.data.ConcatDataset([
     ScaledImageDatasetDTD(download=True),
     ScaledImageCartoonDataset(download=True),
+    # ScaledImageDatasetCountry211(download=True),
 ])
